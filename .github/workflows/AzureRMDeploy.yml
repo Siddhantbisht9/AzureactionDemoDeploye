@@ -50,10 +50,10 @@ jobs:
       - name: Deploy VM ARM Template
         uses: azure/cli@v2
         with:
-          azcliversion: '2.75.0'
-          inlineScript: |
-            az deployment group create \
-              --name VMDeployment \
-              --resource-group Siddhant \
-              --template-file armtemplates/vm.json \
-              --parameters vmName=myVM01 adminUsername=azureuser adminPassword="${{ secrets.VM_ADMIN_PASSWORD }}" location=eastus
+         azcliversion: 2.75.0
+         inlineScript: |
+           az deployment group create \
+            --name VMDeployment \
+            --resource-group Siddhant \
+            --template-file armtemplates/vm.json \
+            --parameters vmName=myVM01 adminUsername=azureuser adminPassword="${{ secrets.VM_ADMIN_PASSWORD }}" location=eastus
