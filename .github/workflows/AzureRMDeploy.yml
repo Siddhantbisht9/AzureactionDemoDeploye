@@ -50,6 +50,7 @@ jobs:
       - name: Deploy VM ARM Template
         uses: azure/cli@v2
         with:
+          azcliversion: '2.75.0'
           inlineScript: |
             az deployment group create \
               --name VMDeployment \
