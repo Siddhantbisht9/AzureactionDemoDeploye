@@ -51,7 +51,7 @@
               "subnet": {
                 "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'myVnet', 'subnet1')]"
               },
-              "privateIPAllocationMethod": "Static"
+             "privateIPAllocationMethod": "Dynamic"
             }
           }
         ]
