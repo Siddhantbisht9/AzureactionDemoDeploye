@@ -36,3 +36,13 @@ jobs:
             --resource-group Siddhant \
             --template-file armtemplates/storageaccount2.json \
             --parameters storageAccountType=Standard_GRS
+
+      - name: Deploy VM ARM Template
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az deployment group create \
+              --name VMDeployment \
+              --resource-group Siddhant \
+              --template-file armtemplates/vm.json \
+              --parameters vmName=myVM01 adminUsername=azureuser adminPassword=${{ secrets.VM_ADMIN_PASSWORD }} location=eastus
