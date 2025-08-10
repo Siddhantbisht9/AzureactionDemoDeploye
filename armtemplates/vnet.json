@@ -8,7 +8,7 @@
     },
     "subnetName": {
       "type": "string",
-      "defaultValue": "default"
+      "defaultValue": "subnet1"
     },
     "addressPrefix": {
       "type": "string",

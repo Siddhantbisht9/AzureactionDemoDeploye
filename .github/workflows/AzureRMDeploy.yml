@@ -45,6 +45,6 @@ jobs:
             --name VNetDeployment \
             --resource-group Siddhant \
             --template-file armtemplates/vnet.json \
-            --parameters vnetName=myVnet subnetName=default addressPrefix=10.0.0.0/16 subnetPrefix=10.0.0.0/24 location=eastus
+            --parameters vnetName=myVnet subnetName=subnet1 addressPrefix=10.0.0.0/16 subnetPrefix=10.0.0.0/24 location=eastus
 
      
