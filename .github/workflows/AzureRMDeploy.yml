@@ -34,5 +34,5 @@ jobs:
             az deployment group create \
             --name StorageAccount2Deployment \
             --resource-group Siddhant \
-            --template-file armtemplates/storageaccount2.json 
+            --template-file armtemplates/storageaccount2.json \
             --parameters storageAccountType=Standard_GRS
