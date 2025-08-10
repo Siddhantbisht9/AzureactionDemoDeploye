@@ -16,13 +16,23 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v2
 
-      - name: Deploy ARM Template
+      - name: Deploy ARM Template 1
         uses: azure/CLI@v1
         with:
           inlineScript: |
             az deployment group create \
-            --name StorageAccountDeployment \
+            --name StorageAccount1Deployment \
             --resource-group Siddhant \
             --template-file armtemplates/storageaccount.json \
-            --template-file armtemplates/storageaccount2.json \
+            --parameters storageAccountType=Standard_GRS
+
+          
+      - name: Deploy ARM Template 2
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az deployment group create \
+            --name StorageAccount2Deployment \
+            --resource-group Siddhant \
+            --template-file armtemplates/storageaccount2.json 
             --parameters storageAccountType=Standard_GRS
