@@ -47,4 +47,12 @@ jobs:
             --template-file armtemplates/vnet.json \
             --parameters vnetName=myVnet subnetName=subnet1 addressPrefix=10.0.0.0/16 subnetPrefix=10.0.0.0/24 location=eastus
 
-     
+      - name: Deploy VM ARM Template
+        uses: azure/cli@v2
+        with:
+          inlineScript: |
+            az deployment group create \
+              --name VMDeployment \
+              --resource-group Siddhant \
+              --template-file armtemplates/vm.json \
+              --parameters vmName=myVM01 adminUsername=azureuser adminPassword=${{ secrets.VM_ADMIN_PASSWORD }} location=eastus
