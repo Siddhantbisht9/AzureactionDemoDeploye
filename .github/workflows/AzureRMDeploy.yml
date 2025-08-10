@@ -55,4 +55,4 @@ jobs:
               --name VMDeployment \
               --resource-group Siddhant \
               --template-file armtemplates/vm.json \
-              --parameters vmName=myVM01 adminUsername=azureuser adminPassword=${{ secrets.VM_ADMIN_PASSWORD }} location=eastus
+              --parameters vmName=myVM01 adminUsername=azureuser adminPassword="${{ secrets.VM_ADMIN_PASSWORD }}" location=eastus
