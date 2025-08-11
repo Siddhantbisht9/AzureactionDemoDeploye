@@ -40,12 +40,19 @@ jobs:
       - name: Deploy VNet and Subnet
         uses: azure/cli@v2
         with:
-          inlineScript: |
+           inlineScript: |
             az deployment group create \
             --name VNetDeployment \
             --resource-group Siddhant \
             --template-file armtemplates/vnet.json \
-            --parameters vnetName=myVnet vnetAddressPrefix=10.0.0.0/16 subnet1Prefix=10.0.2.0/24   appgwSubnetPrefix=10.0.1.0/24  location=eastus
+            --parameters \
+              vnetAddressPrefix=10.0.0.0/16 \
+             subnet1Prefix=10.0.2.0/24 \
+             appgwSubnetPrefix=10.0.1.0/24 \
+             location=eastus
+           azcliversion: agentazcliversion
+        env:
+         AZURE_HTTP_USER_AGENT:
 
       - name: Deploy VM ARM Template
         uses: azure/cli@v2
