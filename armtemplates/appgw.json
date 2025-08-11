@@ -4,11 +4,16 @@
   "parameters": {
     "appGwName": {
       "type": "string",
-      "defaultValue": "myAppGateway"
+      "metadata": {
+        "description": "Name of the Application Gateway"
+      }
     },
     "location": {
       "type": "string",
-      "defaultValue": "[resourceGroup().location]"
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources."
+      }
     },
     "skuName": {
       "type": "string",
@@ -16,18 +21,42 @@
       "allowedValues": [
         "Standard_v2",
         "WAF_v2"
-      ]
+      ],
+      "metadata": {
+        "description": "SKU name of the Application Gateway."
+      }
     },
     "capacity": {
       "type": "int",
       "defaultValue": 2,
-      "minValue": 1
+      "minValue": 1,
+      "maxValue": 10,
+      "metadata": {
+        "description": "Instance count for the Application Gateway."
+      }
+    },
+    "vnetName": {
+      "type": "string",
+      "defaultValue": "myVNet",
+      "metadata": {
+        "description": "Name of the existing Virtual Network."
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "defaultValue": "appgw-subnet",
+      "metadata": {
+        "description": "Name of the subnet in the VNet for the Application Gateway."
+      }
     }
+  },
+  "variables": {
+    "subnetRef": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
   },
   "resources": [
     {
       "type": "Microsoft.Network/applicationGateways",
-      "apiVersion": "2023-05-01",
+      "apiVersion": "2022-05-01",
       "name": "[parameters('appGwName')]",
       "location": "[parameters('location')]",
       "properties": {
@@ -41,17 +70,17 @@
             "name": "appGwIpConfig",
             "properties": {
               "subnet": {
-                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', 'myVNet', 'appgw-subnet')]"
+                "id": "[variables('subnetRef')]"
               }
             }
           }
         ],
         "frontendIPConfigurations": [
           {
-            "name": "appGwFrontendIp",
+            "name": "appGwFrontendIP",
             "properties": {
-              "publicIPAddress": {
-                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('appGwName'), '-publicIP'))]"
+              "PublicIPAddress": {
+                "id": "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('appGwName'), '-pip'))]"
               }
             }
           }
@@ -66,7 +95,8 @@
         ],
         "backendAddressPools": [
           {
-            "name": "appGwBackendPool"
+            "name": "appGwBackendPool",
+            "properties": {}
           }
         ],
         "backendHttpSettingsCollection": [
@@ -76,10 +106,8 @@
               "port": 80,
               "protocol": "Http",
               "cookieBasedAffinity": "Disabled",
-              "probeEnabled": true,
-              "probe": {
-                "id": "[resourceId('Microsoft.Network/applicationGateways/probes', parameters('appGwName'), 'appGwHealthProbe')]"
-              }
+              "pickHostNameFromBackendAddress": false,
+              "probeEnabled": true
             }
           }
         ],
@@ -88,12 +116,14 @@
             "name": "appGwHttpListener",
             "properties": {
               "frontendIPConfiguration": {
-                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGwName')), '/frontendIPConfigurations/appGwFrontendIp')]"
+                "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGwName')), '/frontendIPConfigurations/appGwFrontendIP')]"
               },
               "frontendPort": {
                 "id": "[concat(resourceId('Microsoft.Network/applicationGateways', parameters('appGwName')), '/frontendPorts/appGwFrontendPort')]"
               },
-              "protocol": "Http"
+              "protocol": "Http",
+              "sslCertificate": null,
+              "requireServerNameIndication": false
             }
           }
         ],
@@ -114,36 +144,26 @@
             }
           }
         ],
-        "probes": [
-          {
-            "name": "appGwHealthProbe",
-            "properties": {
-              "protocol": "Http",
-              "path": "/",
-              "interval": 30,
-              "timeout": 30,
-              "unhealthyThreshold": 3,
-              "match": {
-                "statusCodes": [
-                  "200-399"
-                ]
-              }
-            }
-          }
-        ]
-      }
+        "webApplicationFirewallConfiguration": {
+          "enabled": false,
+          "firewallMode": "Prevention"
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Network/publicIPAddresses', concat(parameters('appGwName'), '-pip'))]"
+      ]
     },
     {
       "type": "Microsoft.Network/publicIPAddresses",
-      "apiVersion": "2023-04-01",
-      "name": "[concat(parameters('appGwName'), '-publicIP')]",
+      "apiVersion": "2022-05-01",
+      "name": "[concat(parameters('appGwName'), '-pip')]",
       "location": "[parameters('location')]",
-      "sku": {
-        "name": "Standard"
-      },
       "properties": {
-        "publicIPAllocationMethod": "Static",
-        "idleTimeoutInMinutes": 4
+        "publicIPAllocationMethod": "Dynamic",
+        "idleTimeoutInMinutes": 4,
+        "sku": {
+          "name": "Standard"
+        }
       }
     }
   ]

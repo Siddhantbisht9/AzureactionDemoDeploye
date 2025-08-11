@@ -8,13 +8,14 @@ on:
 jobs:
   deploy-appgw:
     runs-on: ubuntu-latest
+
     steps:
       - name: Login to Azure
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v2
 
       - name: Deploy Application Gateway ARM Template
@@ -26,4 +27,4 @@ jobs:
               --name AppGwDeployment \
               --resource-group Siddhant \
               --template-file armtemplates/appgw.json \
-              --parameters appGwName=myAppGateway location=eastus skuName=Standard_v2 capacity=2
+              --parameters appGwName=myAppGateway location=eastus skuName=Standard_v2 capacity=2 vnetName=myVNet subnetName=appgw-subnet
